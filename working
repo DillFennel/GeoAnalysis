@@ -90,11 +90,20 @@ mos_data_sets = [
     {'name':'weekend_fairs', 'fullname': 'Ярмарки выходного дня', 'mos_id':620}
 ]
 
+cells_inner = h3.grid_ring(hex_id, 1)
+cells_inner.append(hex_id)
+cells_outer = h3.grid_ring(hex_id, 2)
+print(cells_outer)
+
 for data_set in mos_data_sets:
     print("Данные из дата сета "+data_set['fullname'])
     with open("data/"+data_set['name']+'.json', 'r') as file:
         data_from_json = json.load(file)
-        if(hex_id in data_from_json.keys()):
-            print(json.dumps(data_from_json[hex_id], indent=4, ensure_ascii=False))
-        else:
-            print(0)
+        print("На близком расстоянии")
+        for cell in cells_inner:
+            if(cell in data_from_json.keys()):
+                print(json.dumps(data_from_json[cell], indent=4, ensure_ascii=False))
+        print("На более далеком расстоянии")
+        for cell in cells_outer:
+            if(cell in data_from_json.keys()):
+                print(json.dumps(data_from_json[cell], indent=4, ensure_ascii=False))
