@@ -1,0 +1,100 @@
+import json
+import requests
+import h3
+
+ya_geocode_api = 'cb66d83b-7594-40d2-859a-86cbcdb0d20d' #Для геокодера от Яндекса
+
+resolution = 10
+
+address = input()
+coords = requests.get('https://geocode-maps.yandex.ru/1.x/?apikey='+ya_geocode_api+'&geocode='+address.replace(' ', '+')+'&format=json').json()['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split(" ")[::-1]
+
+print(coords)
+
+hex_id = h3.latlng_to_cell(float(coords[0]), float(coords[1]), resolution)
+
+print(hex_id)
+
+mos_data_sets = [
+    {'name':'wifi_biblio', 'fullname': 'Wi-Fi в библиотеках', 'mos_id':60788},
+    {'name':'wifi_cinema', 'fullname': 'Wi-Fi в кинотеатрах', 'mos_id':60789},
+    {'name':'wifi_culture', 'fullname': 'Wi-Fi в культурных центрах', 'mos_id':60790},
+    {'name':'wifi_parks', 'fullname': 'Wi-Fi в парках', 'mos_id':861},
+
+    {'name':'bus_stations', 'fullname': 'Автовокзалы и автостанции Москвы', 'mos_id':1881},
+    {'name':'racing_tracks_indoor', 'fullname': 'Автодромы спортивные крытые', 'mos_id':1384},
+    {'name':'racing_tracks_outdoor', 'fullname': 'Автодромы спортивные открытые', 'mos_id':1385},
+    {'name':'gas_stations_not_eco', 'fullname': 'Автозаправочные станции, реализующие топливо, несоответствующее установленным экологическим требованиям', 'mos_id':754},
+
+    {'name':'gas_stations_eco', 'fullname': 'Автозаправочные станции, реализующие топливо, соответствующее установленным экологическим требованиям', 'mos_id':753},
+    {'name':'aquaparks', 'fullname': 'Аквапарки', 'mos_id':2269},
+    {'name':'attractions_parks', 'fullname': 'Аттракционы в парках и на площадках', 'mos_id':498},
+    {'name':'attractions_shopping_centre', 'fullname': 'Аттракционы в торгово-развлекательных комплексах', 'mos_id':3227},
+    
+    {'name':'airports', 'fullname': 'Аэропорты', 'mos_id':62883},
+    {'name':'swimming_pools_indoor', 'fullname': 'Бассейны плавательные крытые', 'mos_id':890},
+    {'name':'swimming_pools_outdoor', 'fullname': 'Бассейны плавательные открытые', 'mos_id':894},
+    {'name':'botanic_gardens', 'fullname': 'Ботанические сады', 'mos_id':2456},
+
+    {'name':'bicycle_parking', 'fullname': 'Велосипедные парковки', 'mos_id':916},
+    {'name':'metro_exits', 'fullname': 'Входы и выходы вестибюлей станций Московского метрополитена', 'mos_id':624},
+    {'name':'railway_radial_exits', 'fullname': 'Входы и выходы вестибюлей станций радиальных железнодорожных направлений', 'mos_id':62890},
+    {'name':'central_diameter_exits', 'fullname': 'Входы и выходы станций Московских центральных диаметров', 'mos_id':62207},
+
+    {'name':'wifi_city', 'fullname': 'Городской Wi-Fi', 'mos_id':2756},
+    {'name':'children_playgrounds', 'fullname': 'Детские игровые площадки в парках', 'mos_id':1389},
+    {'name':'children_development_centers', 'fullname': 'Детские развивающие центры', 'mos_id':905},
+    {'name':'railway_stations', 'fullname': 'Железнодорожные вокзалы Москвы', 'mos_id':62201},
+
+    {'name':'sports_halls', 'fullname': 'Залы спортивные', 'mos_id':60622},
+    {'name':'tennis_halls', 'fullname': 'Залы теннисные', 'mos_id':60623},
+    {'name':'gyms', 'fullname': 'Залы тренажерные', 'mos_id':60624},
+    {'name':'catholic_churches', 'fullname': 'Католические храмы', 'mos_id':2265},
+
+    {'name':'cinemas', 'fullname': 'Кинотеатры', 'mos_id':495},
+    {'name':'ice_fields_indoor', 'fullname': 'Ледовые поля (крытые)', 'mos_id':1232},
+    {'name':'transport_stops', 'fullname': 'Маршруты и остановки наземного городского пассажирского транспорта (Остановки)', 'mos_id':60662},
+    {'name':'fairs_interregional', 'fullname': 'Межрегиональные ярмарки', 'mos_id':62061},
+
+    {'name':'places_for_activity_with_children', 'fullname': 'Места для досуга и отдыха с детьми', 'mos_id':2249},
+    {'name':'places_for_picnic', 'fullname': 'Места для пикника', 'mos_id':912},
+    {'name':'places_for_horseriding', 'fullname': 'Места катания на лошадях', 'mos_id':1386},
+    {'name':'places_for_collecting_trash', 'fullname': 'Места сбора отходов', 'mos_id':2542},
+
+    {'name':'places_for_collecting_largesize_garbage', 'fullname': 'Места установки бункеров для сбора крупногабаритного мусора', 'mos_id':2470},
+    {'name':'mosques', 'fullname': 'Мечети', 'mos_id':2266},
+    {'name':'monasteries', 'fullname': 'Монастыри', 'mos_id':2267},
+    {'name':'music_venues', 'fullname': 'Музыкальные площадки в парках', 'mos_id':2116},
+
+    {'name':'schools', 'fullname': 'Образовательные учреждения города Москвы', 'mos_id':2263},
+    {'name':'public_catering', 'fullname': 'Общественное питание в Москве', 'mos_id':1903},
+    {'name':'funeral_service_facilities', 'fullname': 'Объекты ритуального обслуживания', 'mos_id':607},
+    {'name':'retail_and_catering_facilities_with_license_for_alcohol', 'fullname': 'Объекты розничной торговли и общественного питания, имеющие лицензию на розничную продажу алкогольной продукции с указанием срока ее действия', 'mos_id':586},
+    
+    {'name':'universities', 'fullname': 'Организации, осуществляющие образовательную деятельность на территории города Москвы, обучающимся в которых предоставляется право на бесплатное оформление социальной карты студента/ординатора/аспиранта/ассистента-стажера', 'mos_id':3326},
+    {'name':'taxi_parking', 'fullname': 'Парковки такси', 'mos_id':621},
+    {'name':'park_areas', 'fullname': 'Парковые территории', 'mos_id':1465},
+    {'name':'parking_intercepting', 'fullname': 'Перехватывающие парковки', 'mos_id':622},
+
+    {'name':'tourist_information_centers', 'fullname': 'Перечень туристско-информационных центров Москвы', 'mos_id':2465},
+    {'name':'paid_parking_closed_type', 'fullname': 'Платные парковки закрытого типа', 'mos_id':1681},
+    {'name':'paid_parking_road_network', 'fullname': 'Платные парковки на улично-дорожной сети', 'mos_id':623},
+    {'name':'dog_walking_grounds', 'fullname': 'Площадки для выгула (дрессировки) собак', 'mos_id':2663},
+
+    {'name':'regional_fairs', 'fullname': 'Региональные ярмарки', 'mos_id':653},
+    {'name':'orthodox_churches', 'fullname': 'Религиозные объекты Русской православной церкви', 'mos_id':2624},
+    {'name':'retail_markets', 'fullname': 'Розничные рынки', 'mos_id':654},
+    {'name':'synagogues', 'fullname': 'Синагоги', 'mos_id':2268},
+
+    {'name':'stationary_retail_facilities', 'fullname': 'Стационарные торговые объекты', 'mos_id':3304},
+    {'name':'weekend_fairs', 'fullname': 'Ярмарки выходного дня', 'mos_id':620}
+]
+
+for data_set in mos_data_sets:
+    print("Данные из дата сета "+data_set['fullname'])
+    with open("data/"+data_set['name']+'.json', 'r') as file:
+        data_from_json = json.load(file)
+        if(hex_id in data_from_json.keys()):
+            print(json.dumps(data_from_json[hex_id], indent=4, ensure_ascii=False))
+        else:
+            print(0)
